@@ -389,13 +389,6 @@ const TrackingPage: React.FC = () => {
     }
   };
 
-  // Auto-track if URL has tracking ID
-  useEffect(() => {
-    if (urlTrackingId) {
-      handleTrack();
-    }
-  }, [urlTrackingId]);
-
   const handleTrack = async () => {
     if (!trackingId.trim()) {
       setError('Please enter a tracking ID');
@@ -421,6 +414,13 @@ const TrackingPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  // Auto-track if URL has tracking ID
+  useEffect(() => {
+    if (urlTrackingId) {
+      handleTrack();
+    }
+  }, [urlTrackingId, handleTrack]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -612,7 +612,7 @@ const TrackingPage: React.FC = () => {
                     const Icon = step.icon;
                     const isCompleted = step.status === 'completed';
                     const isInProgress = step.status === 'in_progress';
-                    const isPending = step.status === 'pending';
+                    // const isPending = step.status === 'pending';
                     
                     return (
                       <motion.div

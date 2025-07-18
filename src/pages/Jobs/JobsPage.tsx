@@ -11,7 +11,6 @@ import {
   ExclamationTriangleIcon,
   PlayIcon,
   StopIcon,
-  UserIcon,
   CalendarIcon,
   DocumentTextIcon,
 } from '@heroicons/react/24/outline';

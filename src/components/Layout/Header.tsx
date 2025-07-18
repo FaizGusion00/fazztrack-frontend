@@ -4,8 +4,6 @@ import {
   Bars3Icon,
   BellIcon,
   ChevronDownIcon,
-  UserIcon,
-  Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../contexts/AuthContext';
