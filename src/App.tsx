@@ -27,7 +27,7 @@ import DesignPage from './pages/Design/DesignPage';
 import ProductsPage from './pages/Products/ProductsPage';
 import QRScannerPage from './pages/QRScanner/QRScannerPage';
 import DueDatesPage from './pages/DueDates/DueDatesPage';
-import RoleManagementPage from './pages/RoleManagement/RoleManagementPage';
+import DepartmentManagementPage from './pages/DepartmentManagement/DepartmentManagementPage';
 import TrackingPage from './pages/Tracking/TrackingPage';
 import LoadingSpinner from './components/UI/LoadingSpinner';
 import DeliveryTrackingPage from './pages/DeliveryTrackingPage';
@@ -105,7 +105,7 @@ const AppRoutes: React.FC = () => {
                 <Route path="/products" element={<ProductsPage />} />
                 <Route path="/scanner" element={<QRScannerPage />} />
                 <Route path="/due-dates" element={<DueDatesPage />} />
-                <Route path="/role-management" element={<RoleManagementPage />} />
+                <Route path="/department-management" element={<DepartmentManagementPage />} />
                 <Route path="/delivery-tracking" element={<DeliveryTrackingPage />} />
                 <Route path="*" element={<Navigate to="/dashboard" replace />} />
               </Routes>

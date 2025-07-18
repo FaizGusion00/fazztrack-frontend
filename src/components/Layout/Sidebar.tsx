@@ -104,11 +104,11 @@ const navigationItems: NavigationItem[] = [
     permission: 'view_due_dates',
   },
   {
-    name: 'Role Management',
-    href: '/role-management',
+    name: 'Department Management',
+    href: '/department-management',
     icon: UserGroupIcon,
     departments: ['superadmin'],
-    permission: 'manage_roles',
+    permission: 'manage_departments',
   },
 ];
 

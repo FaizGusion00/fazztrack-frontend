@@ -429,26 +429,26 @@ const QRScannerPage: React.FC = () => {
     <div className="min-h-screen font-sans bg-white flex flex-col items-center px-2 sm:px-4 py-6">
       <div className="w-full max-w-md sm:max-w-2xl flex flex-col gap-10">
         {/* Header - minimalist, tech, animated */}
-        <motion.div
+      <motion.div
           initial={{ opacity: 0, y: -24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
           className="mb-4 text-center"
-        >
+      >
           <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight mb-2">QR Scanner</h1>
           <p className="text-base sm:text-lg text-gray-500">Scan job QR codes to track and manage production progress</p>
-        </motion.div>
+      </motion.div>
         {/* Scanner Section - minimalist card, animated */}
-        <motion.div
+      <motion.div
           initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
           <Card className="w-full bg-white rounded-2xl shadow-xl border border-gray-100 p-4 sm:p-8 flex flex-col gap-8">
             {/* <Card.Header className="mb-2 sm:mb-6 text-center">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center justify-center">
                 <QrCodeIcon className="h-7 w-7 mr-2 text-blue-500" /> QR Code Scanner
-              </h2>
+            </h2>
             </Card.Header> */}
             <Card.Body className="p-0 flex flex-col gap-8">
               {/* Tabs above camera section */}
@@ -499,16 +499,16 @@ const QRScannerPage: React.FC = () => {
                       {/* Overlay message when camera is not active */}
                       {!isScanning && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/90 rounded-2xl z-10">
-                          <CameraIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                          <p className="text-gray-600">Camera not active</p>
-                        </div>
+                        <CameraIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-600">Camera not active</p>
+                      </div>
                       )}
                     </div>
-                  </div>
+                </div>
                   {/* Add more space before the button */}
                   <div className="mt-6 w-full flex flex-col sm:flex-row justify-center gap-3">
                     {/* Start/Stop Camera Button as before */}
-                    {!isScanning ? (
+                  {!isScanning ? (
                       <Button
                         onClick={startCamera}
                         className="w-full sm:w-auto flex flex-col items-center justify-center px-6 py-4 rounded-xl shadow bg-teal-500 text-white font-semibold hover:bg-teal-600 focus:ring-2 focus:ring-teal-400 transition-all duration-150 gap-2 text-base"
@@ -517,18 +517,18 @@ const QRScannerPage: React.FC = () => {
                           <CameraIcon className="h-8 w-8" />
                         </span>
                         <span className="mt-1">Start Camera</span>
-                      </Button>
-                    ) : (
+                    </Button>
+                  ) : (
                       <Button
                         variant="danger"
                         onClick={stopCamera}
                         className="w-full sm:w-auto px-8 py-4 text-lg rounded-xl shadow bg-red-500 text-white font-semibold hover:bg-red-600 focus:ring-2 focus:ring-red-400 transition-all duration-150 flex items-center gap-2 justify-center"
                       >
                         <StopIcon className="h-5 w-5" />
-                        Stop Camera
-                      </Button>
-                    )}
-                  </div>
+                      Stop Camera
+                    </Button>
+                  )}
+                </div>
                 </motion.div>
               )}
               {activeTab === 'manual' && (
@@ -541,14 +541,14 @@ const QRScannerPage: React.FC = () => {
                   {/* Manual Job Entry Form as before */}
                   <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 text-center">Manual Job Entry</h3>
                   <div className="flex flex-col sm:flex-row gap-3 items-center w-full">
-                    <input
-                      type="text"
-                      value={manualJobId}
-                      onChange={(e) => setManualJobId(e.target.value)}
+                  <input
+                    type="text"
+                    value={manualJobId}
+                    onChange={(e) => setManualJobId(e.target.value)}
                       placeholder="Enter Job ID"
                       className="flex-1 w-full text-lg px-6 py-4 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-blue-400 transition-all duration-150"
-                      onKeyPress={(e) => e.key === 'Enter' && handleManualJobEntry()}
-                    />
+                    onKeyPress={(e) => e.key === 'Enter' && handleManualJobEntry()}
+                  />
                     <Button
                       onClick={handleManualJobEntry}
                       className="w-full sm:w-auto flex flex-col items-center justify-center px-6 py-4 rounded-xl shadow bg-blue-600 text-white font-semibold hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 transition-all duration-150 gap-1 text-base"
@@ -577,10 +577,10 @@ const QRScannerPage: React.FC = () => {
                         className="max-w-[220px] w-full flex flex-col items-center justify-center bg-white rounded-xl border border-blue-200 shadow-sm hover:scale-105 hover:shadow-lg hover:border-blue-400 focus:ring-2 focus:ring-blue-400 transition-all duration-150 px-4 py-4 text-base min-h-[80px] mx-auto"
                       >
                         <span className="font-bold text-gray-900 text-center text-base leading-tight w-full break-words">{job.order?.jobName || 'Unknown Job'}</span>
-                      </Button>
-                    ))}
-                  </div>
+                    </Button>
+                  ))}
                 </div>
+              </div>
               </motion.div>
               {/* Error Display - minimalist */}
               {error && (
@@ -593,223 +593,223 @@ const QRScannerPage: React.FC = () => {
                   {error}
                 </motion.div>
               )}
-            </Card.Body>
-          </Card>
-        </motion.div>
+          </Card.Body>
+        </Card>
+      </motion.div>
         {/* Job Details Modal - glassy, modern, more whitespace */}
         <Modal isOpen={showJobModal} onClose={() => setShowJobModal(false)} size="xl">
-          {currentJob && (
-            <>
-              <Modal.Header>
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center space-x-3">
-                    <QrCodeIcon className="h-6 w-6 text-primary-500" />
-                    <div>
-                      <h3 className="text-lg font-semibold">
-                        {currentJob.order?.jobName || 'Unknown Job'}
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        {currentJob.id} • {currentJob.order?.client?.name || 'Unknown Client'}
-                      </p>
-                    </div>
+        {currentJob && (
+          <>
+            <Modal.Header>
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center space-x-3">
+                  <QrCodeIcon className="h-6 w-6 text-primary-500" />
+                  <div>
+                    <h3 className="text-lg font-semibold">
+                      {currentJob.order?.jobName || 'Unknown Job'}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {currentJob.id} • {currentJob.order?.client?.name || 'Unknown Client'}
+                    </p>
                   </div>
-                  <Badge variant={currentJob.status === 'completed' ? 'success' : currentJob.status === 'in_progress' ? 'warning' : 'secondary'}>
-                    {currentJob.status.replace('_', ' ').toUpperCase()}
-                  </Badge>
                 </div>
-              </Modal.Header>
-              
-              <Modal.Body>
-                <div className="space-y-6">
-                  {/* Job Info */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="flex items-center space-x-2">
-                      <UserIcon className="h-5 w-5 text-gray-400" />
-                      <div>
-                        <p className="text-sm text-gray-600">Assigned To</p>
-                        <p className="font-medium">{currentJob.assignedTo}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <CalendarIcon className="h-5 w-5 text-gray-400" />
-                      <div>
-                        <p className="text-sm text-gray-600">Due Date</p>
-                        <p className="font-medium">{currentJob.dueDate ? new Date(currentJob.dueDate).toLocaleDateString() : 'Not set'}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <ClockIcon className="h-5 w-5 text-gray-400" />
-                      <div>
-                        <p className="text-sm text-gray-600">Progress</p>
-                        <p className="font-medium">{calculateProgress(currentJob)}%</p>
-                      </div>
+                <Badge variant={currentJob.status === 'completed' ? 'success' : currentJob.status === 'in_progress' ? 'warning' : 'secondary'}>
+                  {currentJob.status.replace('_', ' ').toUpperCase()}
+                </Badge>
+              </div>
+            </Modal.Header>
+            
+            <Modal.Body>
+              <div className="space-y-6">
+                {/* Job Info */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex items-center space-x-2">
+                    <UserIcon className="h-5 w-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm text-gray-600">Assigned To</p>
+                      <p className="font-medium">{currentJob.assignedTo}</p>
                     </div>
                   </div>
-
-                  {/* Progress Bar */}
-                  <div>
-                    <div className="flex justify-between text-sm text-gray-600 mb-2">
-                      <span>Overall Progress</span>
-                      <span>{calculateProgress(currentJob)}%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-primary-500 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${calculateProgress(currentJob)}%` }}
-                      ></div>
+                  <div className="flex items-center space-x-2">
+                    <CalendarIcon className="h-5 w-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm text-gray-600">Due Date</p>
+                      <p className="font-medium">{currentJob.dueDate ? new Date(currentJob.dueDate).toLocaleDateString() : 'Not set'}</p>
                     </div>
                   </div>
+                  <div className="flex items-center space-x-2">
+                    <ClockIcon className="h-5 w-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm text-gray-600">Progress</p>
+                      <p className="font-medium">{calculateProgress(currentJob)}%</p>
+                    </div>
+                  </div>
+                </div>
 
-                  {/* Production Phases */}
-                  <div>
-                    <h4 className="text-lg font-medium text-gray-900 mb-4">Production Phases</h4>
-                    <div className="space-y-3">
-                      {currentJob.phases.map((phase, index) => {
-                        const isCurrentPhase = currentJob.currentPhase === phase.id;
-                        const canWork = canUserWorkOnPhase(phase);
-                        const isInProgress = phase.status === 'in_progress';
-                        const isCompleted = phase.status === 'completed';
-                        
-                        return (
-                          <motion.div
-                            key={phase.id}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            className={`border rounded-lg p-4 ${
-                              isCurrentPhase ? 'border-primary-500 bg-primary-50' : 'border-gray-200'
-                            }`}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-3">
-                                <div className="flex items-center space-x-2">
-                                  <span className="text-sm font-medium text-gray-600">
-                                    {phase.order}.
-                                  </span>
-                                  <h5 className="font-medium text-gray-900">
-                                    {phase.name}
-                                  </h5>
-                                </div>
-                                <Badge variant={getPhaseStatusColor(phase.status)} size="sm">
-                                  {phase.status.replace('_', ' ').toUpperCase()}
-                                </Badge>
+                {/* Progress Bar */}
+                <div>
+                  <div className="flex justify-between text-sm text-gray-600 mb-2">
+                    <span>Overall Progress</span>
+                    <span>{calculateProgress(currentJob)}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-primary-500 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${calculateProgress(currentJob)}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Production Phases */}
+                <div>
+                  <h4 className="text-lg font-medium text-gray-900 mb-4">Production Phases</h4>
+                  <div className="space-y-3">
+                    {currentJob.phases.map((phase, index) => {
+                      const isCurrentPhase = currentJob.currentPhase === phase.id;
+                      const canWork = canUserWorkOnPhase(phase);
+                      const isInProgress = phase.status === 'in_progress';
+                      const isCompleted = phase.status === 'completed';
+                      
+                      return (
+                        <motion.div
+                          key={phase.id}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className={`border rounded-lg p-4 ${
+                            isCurrentPhase ? 'border-primary-500 bg-primary-50' : 'border-gray-200'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                              <div className="flex items-center space-x-2">
+                                <span className="text-sm font-medium text-gray-600">
+                                  {phase.order}.
+                                </span>
+                                <h5 className="font-medium text-gray-900">
+                                  {phase.name}
+                                </h5>
                               </div>
-                              
-                              {canExecuteJob && canWork && (
-                                <div className="flex space-x-2">
-                                  {phase.status === 'pending' && (
-                                    <Button
-                                      size="sm"
-                                      onClick={() => handleStartPhase(phase.id)}
-                                      loading={isProcessing}
-                                    >
-                                      <PlayIcon className="h-4 w-4 mr-1" />
-                                      Start
-                                    </Button>
-                                  )}
-                                  {isInProgress && (
-                                    <Button
-                                      size="sm"
-                                      variant="success"
-                                      onClick={() => handleEndPhase(phase.id)}
-                                      loading={isProcessing}
-                                    >
-                                      <CheckIcon className="h-4 w-4 mr-1" />
-                                      Complete
-                                    </Button>
-                                  )}
-                                </div>
-                              )}
+                              <Badge variant={getPhaseStatusColor(phase.status)} size="sm">
+                                {phase.status.replace('_', ' ').toUpperCase()}
+                              </Badge>
                             </div>
                             
-                            {/* Phase Details */}
-                            <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                              {phase.assignedTo && (
-                                <div>
-                                  <span className="text-gray-600">Assigned:</span>
-                                  <span className="ml-1 font-medium">{phase.assignedTo}</span>
-                                </div>
-                              )}
-                              {phase.startTime && (
-                                <div>
-                                  <span className="text-gray-600">Started:</span>
-                                  <span className="ml-1 font-medium">
-                                    {phase.startTime.toLocaleTimeString()}
-                                  </span>
-                                </div>
-                              )}
-                              {phase.duration && (
-                                <div>
-                                  <span className="text-gray-600">Duration:</span>
-                                  <span className="ml-1 font-medium">
-                                    {formatDuration(phase.duration)}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                            
-                            {phase.notes && (
-                              <div className="mt-2">
-                                <p className="text-sm text-gray-600">
-                                  <DocumentTextIcon className="h-4 w-4 inline mr-1" />
-                                  {phase.notes}
-                                </p>
+                            {canExecuteJob && canWork && (
+                              <div className="flex space-x-2">
+                                {phase.status === 'pending' && (
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleStartPhase(phase.id)}
+                                    loading={isProcessing}
+                                  >
+                                    <PlayIcon className="h-4 w-4 mr-1" />
+                                    Start
+                                  </Button>
+                                )}
+                                {isInProgress && (
+                                  <Button
+                                    size="sm"
+                                    variant="success"
+                                    onClick={() => handleEndPhase(phase.id)}
+                                    loading={isProcessing}
+                                  >
+                                    <CheckIcon className="h-4 w-4 mr-1" />
+                                    Complete
+                                  </Button>
+                                )}
                               </div>
                             )}
-                          </motion.div>
-                        );
-                      })}
-                    </div>
+                          </div>
+                          
+                          {/* Phase Details */}
+                          <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            {phase.assignedTo && (
+                              <div>
+                                <span className="text-gray-600">Assigned:</span>
+                                <span className="ml-1 font-medium">{phase.assignedTo}</span>
+                              </div>
+                            )}
+                            {phase.startTime && (
+                              <div>
+                                <span className="text-gray-600">Started:</span>
+                                <span className="ml-1 font-medium">
+                                  {phase.startTime.toLocaleTimeString()}
+                                </span>
+                              </div>
+                            )}
+                            {phase.duration && (
+                              <div>
+                                <span className="text-gray-600">Duration:</span>
+                                <span className="ml-1 font-medium">
+                                  {formatDuration(phase.duration)}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          
+                          {phase.notes && (
+                            <div className="mt-2">
+                              <p className="text-sm text-gray-600">
+                                <DocumentTextIcon className="h-4 w-4 inline mr-1" />
+                                {phase.notes}
+                              </p>
+                            </div>
+                          )}
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 </div>
-              </Modal.Body>
-              
-              <Modal.Footer>
-                <div className="flex space-x-3">
+              </div>
+            </Modal.Body>
+            
+            <Modal.Footer>
+              <div className="flex space-x-3">
+                <Button
+                  variant="ghost"
+                  onClick={() => setShowJobModal(false)}
+                >
+                  Close
+                </Button>
+                <Button
+                  onClick={() => {
+                    setShowJobModal(false);
+                    setIsScanning(false);
+                    setScanResult(null);
+                    setCurrentJob(null);
+                  }}
+                >
+                  Scan Another
+                </Button>
+                {canEditJob && (
                   <Button
-                    variant="ghost"
-                    onClick={() => setShowJobModal(false)}
-                  >
-                    Close
-                  </Button>
-                  <Button
+                    variant="secondary"
                     onClick={() => {
                       setShowJobModal(false);
-                      setIsScanning(false);
-                      setScanResult(null);
-                      setCurrentJob(null);
+                      setShowEditModal(true);
                     }}
                   >
-                    Scan Another
+                    <PencilIcon className="h-4 w-4 mr-2" />
+                    Edit Job
                   </Button>
-                  {canEditJob && (
-                    <Button
-                      variant="secondary"
-                      onClick={() => {
-                        setShowJobModal(false);
-                        setShowEditModal(true);
-                      }}
-                    >
-                      <PencilIcon className="h-4 w-4 mr-2" />
-                      Edit Job
-                    </Button>
-                  )}
-                </div>
-              </Modal.Footer>
-            </>
-          )}
-        </Modal>
+                )}
+              </div>
+            </Modal.Footer>
+          </>
+        )}
+      </Modal>
 
         {/* 1. Edit Job Modal - modern, glassy, minimalist, responsive */}
-        <Modal
-          isOpen={showEditModal}
-          onClose={() => setShowEditModal(false)}
-          size="lg"
-        >
-          <Modal.Header>
+      <Modal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        size="lg"
+      >
+        <Modal.Header>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">Edit Job Details</h3>
-          </Modal.Header>
-          <Modal.Body>
+        </Modal.Header>
+        <Modal.Body>
             <div className="bg-white/80 backdrop-blur-lg rounded-2xl p-8 space-y-8">
               <form /* onSubmit={handleEditJobSubmit} */>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -897,9 +897,9 @@ const QRScannerPage: React.FC = () => {
                   <Button type="submit" className="px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg hover:scale-105 transition-transform">Save Changes</Button>
                 </div>
               </form>
-            </div>
-          </Modal.Body>
-        </Modal>
+          </div>
+        </Modal.Body>
+      </Modal>
       </div>
     </div>
   );

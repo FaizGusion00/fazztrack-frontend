@@ -588,9 +588,9 @@ const OrdersPage: React.FC = () => {
           </div> */}
         </div>
         <button
-          onClick={() => handleOpenModal('create')}
+            onClick={() => handleOpenModal('create')}
           className="mt-4 sm:mt-0 bg-white text-blue-700 font-semibold px-8 py-4 rounded-xl shadow hover:bg-blue-50 border-0 flex flex-col items-center justify-center text-base transition-all duration-150"
-        >
+          >
           <span className="text-xl leading-none mb-1">+</span>
           Add Order
         </button>
@@ -646,7 +646,7 @@ const OrdersPage: React.FC = () => {
         >
           Completed Orders
         </button>
-      </div>
+                    </div>
       <div className="h-4 sm:h-8" />
       {/* Orders List: modern, minimalist, list-style like ClientsPage but not boxes */}
       <div className="bg-white rounded-2xl shadow border border-blue-100 divide-y divide-blue-50 overflow-hidden">
@@ -656,7 +656,7 @@ const OrdersPage: React.FC = () => {
           <span>Total</span>
           <span>Due Dates</span>
           <span className="text-right">Actions</span>
-        </div>
+                      </div>
         {displayedOrders.map((order) => (
           <div
             key={order.id}
@@ -666,25 +666,25 @@ const OrdersPage: React.FC = () => {
             <div className="flex-1 min-w-0">
               <div className="font-bold text-gray-900 truncate">{order.jobName}</div>
               <div className="text-sm text-gray-500 truncate">{order.client?.name}</div>
-            </div>
+                      </div>
             {/* Status */}
             <div className="w-32 flex-shrink-0 flex items-center justify-center my-2 sm:my-0">
               <Badge variant={getStatusColor(order.status) as any} className="px-3 py-1 text-xs rounded-xl">
                 {getStatusLabel(order.status)}
               </Badge>
-            </div>
+                      </div>
             {/* Total */}
             <div className="w-28 flex-shrink-0 text-gray-700 text-sm text-center">RM {order.subtotal.toLocaleString()}</div>
             {/* Due Dates */}
             <div className="w-40 flex-shrink-0 text-xs text-gray-500 text-center">
               <div>Design: {order.designDueDate ? new Date(order.designDueDate).toLocaleDateString() : '-'}</div>
               <div>Production: {order.productionDueDate ? new Date(order.productionDueDate).toLocaleDateString() : '-'}</div>
-            </div>
+                      </div>
             {/* Actions */}
             <div className="flex space-x-2 ml-auto mt-2 sm:mt-0">
               <Button variant="ghost" size="sm" onClick={() => handleOpenModal('view', order)} className="hover:bg-blue-100 text-blue-700 p-2 rounded-xl">
                 <EyeIcon className="h-4 w-4" />
-              </Button>
+                    </Button>
               {(order.status as string) === 'delivered' && (
                 <Button variant="ghost" size="sm" onClick={() => { setSelectedOrder(order); setShowReceipt(true); }} className="hover:bg-blue-100 text-blue-700 p-2 rounded-xl">
                   <DocumentIcon className="h-4 w-4" />
@@ -693,15 +693,15 @@ const OrdersPage: React.FC = () => {
               {canEdit && (order.status as string) !== 'order_completed' && (order.status as string) !== 'delivered' && (
                 <Button variant="ghost" size="sm" onClick={() => handleOpenModal('edit', order)} className="hover:bg-green-100 text-green-700 p-2 rounded-xl">
                   <PencilIcon className="h-4 w-4" />
-                </Button>
-              )}
-              {canDelete && (
+                      </Button>
+                    )}
+                    {canDelete && (
                 <Button variant="ghost" size="sm" onClick={() => handleDeleteOrder(order.id)} className="hover:bg-red-100 text-red-700 p-2 rounded-xl">
-                  <TrashIcon className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-          </div>
+                        <TrashIcon className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                </div>
         ))}
       </div>
       {/* No orders found - compact, modern */}

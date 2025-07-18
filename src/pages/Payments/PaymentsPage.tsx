@@ -257,7 +257,7 @@ const PaymentsPage: React.FC = () => {
     }
   };
 
-  const canApprove = hasPermission('payments');
+  const canApprove = hasPermission('payments') && (user?.department === 'superadmin' || user?.department === 'admin');
 
   if (loading) {
     return (
