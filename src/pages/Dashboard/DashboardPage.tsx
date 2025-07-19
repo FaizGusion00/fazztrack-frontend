@@ -11,6 +11,11 @@ import {
   ChartBarSquareIcon,
   ArrowUpIcon,
   ArrowDownIcon,
+  CreditCardIcon,
+  ExclamationTriangleIcon,
+  DocumentTextIcon,
+  PaintBrushIcon,
+  CalendarDaysIcon,
 } from '@heroicons/react/24/outline';
 import {
   LineChart,
@@ -97,6 +102,38 @@ const DashboardPage: React.FC = () => {
     { name: 'IRON/PACK', value: 4, color: '#6366F1' },
   ];
 
+  const todayProductionData: ChartData[] = [
+    { name: 'PRINT', value: 3, color: '#8B5CF6' },
+    { name: 'PRESS', value: 2, color: '#06B6D4' },
+    { name: 'CUT', value: 4, color: '#84CC16' },
+    { name: 'SEW', value: 3, color: '#F97316' },
+    { name: 'QC', value: 2, color: '#EC4899' },
+    { name: 'IRON/PACK', value: 1, color: '#6366F1' },
+  ];
+
+  const productionEfficiencyData = [
+    { phase: 'PRINT', efficiency: 85, target: 90 },
+    { phase: 'PRESS', efficiency: 92, target: 90 },
+    { phase: 'CUT', efficiency: 88, target: 90 },
+    { phase: 'SEW', efficiency: 95, target: 90 },
+    { phase: 'QC', efficiency: 87, target: 90 },
+    { phase: 'IRON/PACK', efficiency: 91, target: 90 },
+  ];
+
+  const paymentStatusData: ChartData[] = [
+    { name: 'Paid', value: 65, color: '#10B981' },
+    { name: 'Pending', value: 18, color: '#F59E0B' },
+    { name: 'Overdue', value: 12, color: '#EF4444' },
+    { name: 'Partial', value: 5, color: '#8B5CF6' },
+  ];
+
+  const designStatusData: ChartData[] = [
+    { name: 'Approved', value: 35, color: '#10B981' },
+    { name: 'In Review', value: 22, color: '#3B82F6' },
+    { name: 'Pending', value: 18, color: '#F59E0B' },
+    { name: 'Rejected', value: 5, color: '#EF4444' },
+  ];
+
   const revenueData = [
     { month: 'Jan', revenue: 12500, orders: 45 },
     { month: 'Feb', revenue: 15200, orders: 52 },
@@ -120,6 +157,206 @@ const DashboardPage: React.FC = () => {
     { id: 5, action: 'Order shipped', client: 'Global Inc', time: '3h ago', type: 'shipping', amount: 'RM 4,200' },
   ];
 
+  // Role-based dashboard configuration
+  const getDashboardConfig = () => {
+    if (!user) return { showAll: false, sections: [] };
+
+    switch (user.role) {
+      case 'superadmin':
+        return {
+          showAll: true,
+          sections: ['overview', 'orders', 'revenue', 'production', 'payments', 'design', 'activities']
+        };
+      
+      case 'admin':
+        return {
+          showAll: false,
+          sections: ['overview', 'payments', 'design', 'production', 'activities']
+        };
+      
+      case 'sales_manager':
+        return {
+          showAll: false,
+          sections: ['overview', 'orders', 'revenue', 'production', 'payments']
+        };
+      
+      case 'designer':
+        return {
+          showAll: false,
+          sections: ['overview', 'design', 'orders']
+        };
+      
+      case 'print':
+      case 'press':
+      case 'cut':
+      case 'sew':
+      case 'qc':
+      case 'iron_packing':
+        return {
+          showAll: false,
+          sections: ['overview', 'production', 'job_status']
+        };
+      
+      default:
+        return {
+          showAll: false,
+          sections: ['overview']
+        };
+    }
+  };
+
+  const dashboardConfig = getDashboardConfig();
+
+  // Role-based stat cards
+  const getStatCards = () => {
+    if (!stats) return [];
+
+    const baseCards = [
+      {
+        title: 'Total Orders',
+        value: stats.totalOrders,
+        icon: ShoppingBagIcon,
+        color: 'primary',
+        change: '+12%',
+        changeType: 'positive' as const,
+        gradient: 'from-blue-500 to-blue-600',
+        roles: ['superadmin', 'sales_manager', 'designer']
+      },
+      {
+        title: 'Revenue',
+        value: `RM ${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        icon: CurrencyDollarIcon,
+        color: 'success',
+        change: '+8.2%',
+        changeType: 'positive' as const,
+        gradient: 'from-green-500 to-green-600',
+        roles: ['superadmin', 'sales_manager']
+      },
+      {
+        title: 'Active Jobs',
+        value: stats.activeJobs,
+        icon: ClockIcon,
+        color: 'warning',
+        change: '+5',
+        changeType: 'positive' as const,
+        gradient: 'from-orange-500 to-orange-600',
+        roles: ['superadmin', 'admin', 'sales_manager', 'designer', 'print', 'press', 'cut', 'sew', 'qc', 'iron_packing']
+      },
+      {
+        title: 'Today\'s Jobs',
+        value: 6, // Mock data - replace with actual API call
+        icon: CalendarDaysIcon,
+        color: 'info',
+        change: '+2',
+        changeType: 'positive' as const,
+        gradient: 'from-cyan-500 to-cyan-600',
+        roles: ['print', 'press', 'cut', 'sew', 'qc', 'iron_packing']
+      },
+      {
+        title: 'Completed Today',
+        value: 4, // Mock data - replace with actual API call
+        icon: CheckCircleIcon,
+        color: 'success',
+        change: '+1',
+        changeType: 'positive' as const,
+        gradient: 'from-green-500 to-green-600',
+        roles: ['print', 'press', 'cut', 'sew', 'qc', 'iron_packing']
+      },
+      {
+        title: 'Pending QC',
+        value: 3, // Mock data - replace with actual API call
+        icon: ExclamationTriangleIcon,
+        color: 'warning',
+        change: '+1',
+        changeType: 'negative' as const,
+        gradient: 'from-yellow-500 to-yellow-600',
+        roles: ['print', 'press', 'cut', 'sew', 'qc', 'iron_packing']
+      },
+      {
+        title: 'Total Clients',
+        value: stats.totalClients,
+        icon: UsersIcon,
+        color: 'secondary',
+        change: '+3',
+        changeType: 'positive' as const,
+        gradient: 'from-purple-500 to-purple-600',
+        roles: ['superadmin', 'sales_manager']
+      },
+      {
+        title: 'Pending Deliveries',
+        value: 8, // Mock data - replace with actual API call
+        icon: TruckIcon,
+        color: 'warning',
+        change: '+2',
+        changeType: 'negative' as const,
+        gradient: 'from-amber-500 to-amber-600',
+        roles: ['sales_manager']
+      },
+      {
+        title: 'Completed Jobs',
+        value: stats.completedJobs,
+        icon: CheckCircleIcon,
+        color: 'success',
+        change: '+8',
+        changeType: 'positive' as const,
+        gradient: 'from-emerald-500 to-emerald-600',
+        roles: ['admin', 'sales_manager']
+      },
+      {
+        title: 'Pending Payments',
+        value: stats.pendingPayments,
+        icon: CreditCardIcon,
+        color: 'warning',
+        change: '-2',
+        changeType: 'negative' as const,
+        gradient: 'from-yellow-500 to-yellow-600',
+        roles: ['superadmin', 'admin']
+      },
+      {
+        title: 'Pending Designs',
+        value: 15, // Mock data - replace with actual API call
+        icon: PaintBrushIcon,
+        color: 'warning',
+        change: '+3',
+        changeType: 'negative' as const,
+        gradient: 'from-pink-500 to-pink-600',
+        roles: ['superadmin', 'admin']
+      },
+      {
+        title: 'Overdue Jobs',
+        value: stats.overdueJobs,
+        icon: ExclamationTriangleIcon,
+        color: 'danger',
+        change: '+1',
+        changeType: 'negative' as const,
+        gradient: 'from-red-500 to-red-600',
+        roles: ['superadmin', 'sales_manager', 'print', 'press', 'cut', 'sew', 'qc', 'iron_packing']
+      },
+      {
+        title: 'Completed Jobs',
+        value: stats.completedJobs,
+        icon: CheckCircleIcon,
+        color: 'success',
+        change: '+8',
+        changeType: 'positive' as const,
+        gradient: 'from-emerald-500 to-emerald-600',
+        roles: ['admin']
+      },
+      {
+        title: 'Active Staff',
+        value: 12, // Mock data - replace with actual API call
+        icon: UsersIcon,
+        color: 'info',
+        change: '+1',
+        changeType: 'positive' as const,
+        gradient: 'from-indigo-500 to-indigo-600',
+        roles: ['admin']
+      }
+    ];
+
+    return baseCards.filter(card => card.roles.includes(user?.role || ''));
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -128,44 +365,7 @@ const DashboardPage: React.FC = () => {
     );
   }
 
-  const statCards = [
-    {
-      title: 'Total Orders',
-      value: stats?.totalOrders || 0,
-      icon: ShoppingBagIcon,
-      color: 'primary',
-      change: '+12%',
-      changeType: 'positive' as const,
-      gradient: 'from-blue-500 to-blue-600',
-    },
-    {
-      title: 'Revenue',
-      value: `RM ${(stats?.totalRevenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-      icon: CurrencyDollarIcon,
-      color: 'success',
-      change: '+8.2%',
-      changeType: 'positive' as const,
-      gradient: 'from-green-500 to-green-600',
-    },
-    {
-      title: 'Active Jobs',
-      value: stats?.activeJobs || 0,
-      icon: ClockIcon,
-      color: 'warning',
-      change: '+5',
-      changeType: 'positive' as const,
-      gradient: 'from-orange-500 to-orange-600',
-    },
-    {
-      title: 'Total Clients',
-      value: stats?.totalClients || 0,
-      icon: UsersIcon,
-      color: 'secondary',
-      change: '+3',
-      changeType: 'positive' as const,
-      gradient: 'from-purple-500 to-purple-600',
-    },
-  ];
+  const statCards = getStatCards();
 
   // Custom tooltip component
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -202,7 +402,7 @@ const DashboardPage: React.FC = () => {
       </motion.div>
 
       {/* Compact Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4">
         {statCards.map((stat, index) => {
           const IconComponent = stat.icon;
           return (
@@ -251,9 +451,8 @@ const DashboardPage: React.FC = () => {
         })}
       </div>
 
-      {/* Compact Charts Row */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        {/* Compact Order Trends */}
+      {/* Role-based Charts */}
+      {dashboardConfig.sections.includes('orders') && (
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -343,120 +542,483 @@ const DashboardPage: React.FC = () => {
             </Card.Body>
           </Card>
         </motion.div>
+      )}
 
-        {/* Compact Job Status Distribution */}
+      {/* Charts Grid - Role-based */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        {/* Job Status Distribution - for production staff only */}
+        {dashboardConfig.sections.includes('production') && !dashboardConfig.sections.includes('orders') && (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <Card className="bg-gradient-to-br from-white to-purple-50/30 border-0 shadow-lg">
+              <Card.Header className="pb-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900">
+                      Job Status
+                    </h3>
+                    <p className="text-gray-600 text-xs">
+                      Current job status breakdown
+                    </p>
+                  </div>
+                  <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg">
+                    <ChartBarIcon className="h-4 w-4 text-white" />
+                  </div>
+                </div>
+              </Card.Header>
+              <Card.Body className="pt-0">
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={jobStatusData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                      startAngle={90}
+                      endAngle={-270}
+                    >
+                      {jobStatusData.map((entry, index) => (
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={entry.color}
+                          stroke="#fff"
+                          strokeWidth={1}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      content={<CustomTooltip />}
+                      cursor={false}
+                    />
+                    <Legend 
+                      layout="vertical"
+                      verticalAlign="middle"
+                      align="right"
+                      wrapperStyle={{ paddingLeft: '10px', fontSize: '11px' }}
+                      iconType="circle"
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Card.Body>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* Order Status Distribution - for sales manager and superadmin */}
+        {dashboardConfig.sections.includes('orders') && (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <Card className="bg-gradient-to-br from-white to-blue-50/30 border-0 shadow-lg">
+              <Card.Header className="pb-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900">
+                      Order Status
+                    </h3>
+                    <p className="text-gray-600 text-xs">
+                      Current order status breakdown
+                    </p>
+                  </div>
+                  <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg">
+                    <ShoppingBagIcon className="h-4 w-4 text-white" />
+                  </div>
+                </div>
+              </Card.Header>
+              <Card.Body className="pt-0">
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={jobStatusData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                      startAngle={90}
+                      endAngle={-270}
+                    >
+                      {jobStatusData.map((entry, index) => (
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={entry.color}
+                          stroke="#fff"
+                          strokeWidth={1}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      content={<CustomTooltip />}
+                      cursor={false}
+                    />
+                    <Legend 
+                      layout="vertical"
+                      verticalAlign="middle"
+                      align="right"
+                      wrapperStyle={{ paddingLeft: '10px', fontSize: '11px' }}
+                      iconType="circle"
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Card.Body>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* Payment Status - for admin, superadmin, and sales manager */}
+        {dashboardConfig.sections.includes('payments') && (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <Card className="bg-gradient-to-br from-white to-yellow-50/30 border-0 shadow-lg">
+              <Card.Header className="pb-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900">
+                      Payment Status
+                    </h3>
+                    <p className="text-gray-600 text-xs">
+                      Payment status distribution
+                    </p>
+                  </div>
+                  <div className="p-2 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-lg">
+                    <CreditCardIcon className="h-4 w-4 text-white" />
+                  </div>
+                </div>
+              </Card.Header>
+              <Card.Body className="pt-0">
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={paymentStatusData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                      startAngle={90}
+                      endAngle={-270}
+                    >
+                      {paymentStatusData.map((entry, index) => (
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={entry.color}
+                          stroke="#fff"
+                          strokeWidth={1}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      content={<CustomTooltip />}
+                      cursor={false}
+                    />
+                    <Legend 
+                      layout="vertical"
+                      verticalAlign="middle"
+                      align="right"
+                      wrapperStyle={{ paddingLeft: '10px', fontSize: '11px' }}
+                      iconType="circle"
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Card.Body>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* Design Status - for designers */}
+        {dashboardConfig.sections.includes('design') && (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <Card className="bg-gradient-to-br from-white to-pink-50/30 border-0 shadow-lg">
+              <Card.Header className="pb-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900">
+                      Design Status
+                    </h3>
+                    <p className="text-gray-600 text-xs">
+                      Design approval status breakdown
+                    </p>
+                  </div>
+                  <div className="p-2 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg">
+                    <PaintBrushIcon className="h-4 w-4 text-white" />
+                  </div>
+                </div>
+              </Card.Header>
+              <Card.Body className="pt-0">
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={designStatusData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                      startAngle={90}
+                      endAngle={-270}
+                    >
+                      {designStatusData.map((entry, index) => (
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={entry.color}
+                          stroke="#fff"
+                          strokeWidth={1}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      content={<CustomTooltip />}
+                      cursor={false}
+                    />
+                    <Legend 
+                      layout="vertical"
+                      verticalAlign="middle"
+                      align="right"
+                      wrapperStyle={{ paddingLeft: '10px', fontSize: '11px' }}
+                      iconType="circle"
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Card.Body>
+            </Card>
+          </motion.div>
+        )}
+      </div>
+
+      {/* Production Pipeline - for production staff and relevant roles */}
+      {dashboardConfig.sections.includes('production') && (
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <Card className="bg-gradient-to-br from-white to-green-50/30 border-0 shadow-lg">
+              <Card.Header className="pb-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900">
+                      Production Pipeline
+                    </h3>
+                    <p className="text-gray-600 text-xs">
+                      Current jobs in each production stage
+                    </p>
+                  </div>
+                  <div className="p-2 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg">
+                    <TruckIcon className="h-4 w-4 text-white" />
+                  </div>
+                </div>
+              </Card.Header>
+              <Card.Body className="pt-0">
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={productionData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
+                    <defs>
+                      <linearGradient id="barGradient1" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#8B5CF6" stopOpacity={1}/>
+                        <stop offset="100%" stopColor="#7C3AED" stopOpacity={0.8}/>
+                      </linearGradient>
+                      <linearGradient id="barGradient2" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#06B6D4" stopOpacity={1}/>
+                        <stop offset="100%" stopColor="#0891B2" stopOpacity={0.8}/>
+                      </linearGradient>
+                      <linearGradient id="barGradient3" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#84CC16" stopOpacity={1}/>
+                        <stop offset="100%" stopColor="#65A30D" stopOpacity={0.8}/>
+                      </linearGradient>
+                      <linearGradient id="barGradient4" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#F97316" stopOpacity={1}/>
+                        <stop offset="100%" stopColor="#EA580C" stopOpacity={0.8}/>
+                      </linearGradient>
+                      <linearGradient id="barGradient5" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#EC4899" stopOpacity={1}/>
+                        <stop offset="100%" stopColor="#DB2777" stopOpacity={0.8}/>
+                      </linearGradient>
+                      <linearGradient id="barGradient6" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#6366F1" stopOpacity={1}/>
+                        <stop offset="100%" stopColor="#4F46E5" stopOpacity={0.8}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" opacity={0.2} />
+                    <XAxis 
+                      dataKey="name" 
+                      stroke="#6B7280" 
+                      fontSize={10}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis 
+                      stroke="#6B7280" 
+                      fontSize={10}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <Tooltip 
+                      content={<CustomTooltip />}
+                      cursor={{ fill: 'rgba(59, 130, 246, 0.1)' }}
+                    />
+                    <Bar 
+                      dataKey="value" 
+                      radius={[4, 4, 0, 0]}
+                      barSize={25}
+                    >
+                      {productionData.map((entry, index) => (
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={`url(#barGradient${index + 1})`}
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card.Body>
+            </Card>
+          </motion.div>
+
+          {/* Production Efficiency - for production staff only */}
+          {dashboardConfig.sections.includes('job_status') && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <Card className="bg-gradient-to-br from-white to-blue-50/30 border-0 shadow-lg">
+                <Card.Header className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900">
+                        Production Efficiency
+                      </h3>
+                      <p className="text-gray-600 text-xs">
+                        Efficiency vs target by production phase
+                      </p>
+                    </div>
+                    <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg">
+                      <ChartBarIcon className="h-4 w-4 text-white" />
+                    </div>
+                  </div>
+                </Card.Header>
+                <Card.Body className="pt-0">
+                  <ResponsiveContainer width="100%" height={250}>
+                    <BarChart data={productionEfficiencyData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
+                      <defs>
+                        <linearGradient id="efficiencyGradient1" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#10B981" stopOpacity={1}/>
+                          <stop offset="100%" stopColor="#059669" stopOpacity={0.8}/>
+                        </linearGradient>
+                        <linearGradient id="efficiencyGradient2" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#F59E0B" stopOpacity={1}/>
+                          <stop offset="100%" stopColor="#D97706" stopOpacity={0.8}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" opacity={0.2} />
+                      <XAxis 
+                        dataKey="phase" 
+                        stroke="#6B7280" 
+                        fontSize={10}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <YAxis 
+                        stroke="#6B7280" 
+                        fontSize={10}
+                        tickLine={false}
+                        axisLine={false}
+                        domain={[0, 100]}
+                        tickFormatter={(value) => `${value}%`}
+                      />
+                      <Tooltip 
+                        content={<CustomTooltip />}
+                        cursor={{ fill: 'rgba(59, 130, 246, 0.1)' }}
+                      />
+                      <Bar 
+                        dataKey="efficiency" 
+                        radius={[4, 4, 0, 0]}
+                        barSize={20}
+                        fill="url(#efficiencyGradient1)"
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="target"
+                        stroke="#EF4444"
+                        strokeWidth={2}
+                        dot={{ fill: '#EF4444', strokeWidth: 1, r: 3 }}
+                        name="Target"
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </Card.Body>
+              </Card>
+            </motion.div>
+          )}
+        </div>
+      )}
+
+      {/* Today's Production - for production staff only */}
+      {dashboardConfig.sections.includes('job_status') && (
         <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
         >
           <Card className="bg-gradient-to-br from-white to-purple-50/30 border-0 shadow-lg">
             <Card.Header className="pb-2">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-bold text-gray-900">
-                    Job Status
+                    Today's Production
                   </h3>
                   <p className="text-gray-600 text-xs">
-                    Current job status breakdown
+                    Jobs completed today by production phase
                   </p>
                 </div>
                 <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg">
-                  <ChartBarIcon className="h-4 w-4 text-white" />
+                  <CalendarDaysIcon className="h-4 w-4 text-white" />
                 </div>
               </div>
             </Card.Header>
             <Card.Body className="pt-0">
-              <ResponsiveContainer width="100%" height={250}>
-                <PieChart>
-                  <Pie
-                    data={jobStatusData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={50}
-                    outerRadius={80}
-                    paddingAngle={5}
-                    dataKey="value"
-                    startAngle={90}
-                    endAngle={-270}
-                  >
-                    {jobStatusData.map((entry, index) => (
-                      <Cell 
-                        key={`cell-${index}`} 
-                        fill={entry.color}
-                        stroke="#fff"
-                        strokeWidth={1}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    content={<CustomTooltip />}
-                    cursor={false}
-                  />
-                  <Legend 
-                    layout="vertical"
-                    verticalAlign="middle"
-                    align="right"
-                    wrapperStyle={{ paddingLeft: '10px', fontSize: '11px' }}
-                    iconType="circle"
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </Card.Body>
-          </Card>
-        </motion.div>
-      </div>
-
-      {/* Compact Production Pipeline & Recent Activities */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-        {/* Compact Production Pipeline */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="xl:col-span-2"
-        >
-          <Card className="bg-gradient-to-br from-white to-green-50/30 border-0 shadow-lg">
-            <Card.Header className="pb-2">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900">
-                    Production Pipeline
-                  </h3>
-                  <p className="text-gray-600 text-xs">
-                    Current jobs in each production stage
-                  </p>
-                </div>
-                <div className="p-2 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg">
-                  <TruckIcon className="h-4 w-4 text-white" />
-                </div>
-              </div>
-            </Card.Header>
-            <Card.Body className="pt-0">
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={productionData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={todayProductionData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
                   <defs>
-                    <linearGradient id="barGradient1" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id="todayGradient1" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#8B5CF6" stopOpacity={1}/>
                       <stop offset="100%" stopColor="#7C3AED" stopOpacity={0.8}/>
                     </linearGradient>
-                    <linearGradient id="barGradient2" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id="todayGradient2" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#06B6D4" stopOpacity={1}/>
                       <stop offset="100%" stopColor="#0891B2" stopOpacity={0.8}/>
                     </linearGradient>
-                    <linearGradient id="barGradient3" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id="todayGradient3" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#84CC16" stopOpacity={1}/>
                       <stop offset="100%" stopColor="#65A30D" stopOpacity={0.8}/>
                     </linearGradient>
-                    <linearGradient id="barGradient4" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id="todayGradient4" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#F97316" stopOpacity={1}/>
                       <stop offset="100%" stopColor="#EA580C" stopOpacity={0.8}/>
                     </linearGradient>
-                    <linearGradient id="barGradient5" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id="todayGradient5" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#EC4899" stopOpacity={1}/>
                       <stop offset="100%" stopColor="#DB2777" stopOpacity={0.8}/>
                     </linearGradient>
-                    <linearGradient id="barGradient6" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id="todayGradient6" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#6366F1" stopOpacity={1}/>
                       <stop offset="100%" stopColor="#4F46E5" stopOpacity={0.8}/>
                     </linearGradient>
@@ -482,12 +1044,12 @@ const DashboardPage: React.FC = () => {
                   <Bar 
                     dataKey="value" 
                     radius={[4, 4, 0, 0]}
-                    barSize={25}
+                    barSize={20}
                   >
-                    {productionData.map((entry, index) => (
+                    {todayProductionData.map((entry, index) => (
                       <Cell 
                         key={`cell-${index}`} 
-                        fill={`url(#barGradient${index + 1})`}
+                        fill={`url(#todayGradient${index + 1})`}
                       />
                     ))}
                   </Bar>
@@ -496,14 +1058,80 @@ const DashboardPage: React.FC = () => {
             </Card.Body>
           </Card>
         </motion.div>
+      )}
 
-        {/* Compact Recent Activities */}
+      {/* Revenue Chart - for admin, superadmin, and sales manager */}
+      {dashboardConfig.sections.includes('revenue') && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <Card className="bg-gradient-to-br from-white to-orange-50/30 border-0 shadow-lg h-full">
+          <Card className="bg-gradient-to-br from-white to-indigo-50/30 border-0 shadow-lg">
+            <Card.Header className="pb-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">
+                    Revenue Overview
+                  </h3>
+                  <p className="text-gray-600 text-xs">
+                    Monthly revenue performance
+                  </p>
+                </div>
+                <div className="p-2 bg-gradient-to-r from-indigo-500 to-blue-600 rounded-lg">
+                  <CurrencyDollarIcon className="h-4 w-4 text-white" />
+                </div>
+              </div>
+            </Card.Header>
+            <Card.Body className="pt-0">
+              <ResponsiveContainer width="100%" height={200}>
+                <AreaChart data={revenueData}>
+                  <defs>
+                    <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#6366F1" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#6366F1" stopOpacity={0.1}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" opacity={0.2} />
+                  <XAxis 
+                    dataKey="month" 
+                    stroke="#6B7280" 
+                    fontSize={10}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <YAxis 
+                    stroke="#6B7280" 
+                    fontSize={10}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(value) => `RM ${(value/1000).toFixed(0)}k`}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="#6366F1"
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#revenueGradient)"
+                    name="Revenue"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </Card.Body>
+          </Card>
+        </motion.div>
+      )}
+
+      {/* Recent Activities - for all roles */}
+      {dashboardConfig.sections.includes('activities') && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          <Card className="bg-gradient-to-br from-white to-orange-50/30 border-0 shadow-lg">
             <Card.Header className="pb-2">
               <div className="flex items-center justify-between">
                 <div>
@@ -590,69 +1218,7 @@ const DashboardPage: React.FC = () => {
             </Card.Body>
           </Card>
         </motion.div>
-      </div>
-
-      {/* Compact Revenue Chart */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.5 }}
-      >
-        <Card className="bg-gradient-to-br from-white to-indigo-50/30 border-0 shadow-lg">
-          <Card.Header className="pb-2">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-bold text-gray-900">
-                  Revenue Overview
-                </h3>
-                <p className="text-gray-600 text-xs">
-                  Monthly revenue performance
-                </p>
-              </div>
-              <div className="p-2 bg-gradient-to-r from-indigo-500 to-blue-600 rounded-lg">
-                <CurrencyDollarIcon className="h-4 w-4 text-white" />
-              </div>
-            </div>
-          </Card.Header>
-          <Card.Body className="pt-0">
-            <ResponsiveContainer width="100%" height={200}>
-              <AreaChart data={revenueData}>
-                <defs>
-                  <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366F1" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#6366F1" stopOpacity={0.1}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" opacity={0.2} />
-                <XAxis 
-                  dataKey="month" 
-                  stroke="#6B7280" 
-                  fontSize={10}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <YAxis 
-                  stroke="#6B7280" 
-                  fontSize={10}
-                  tickLine={false}
-                  axisLine={false}
-                  tickFormatter={(value) => `RM ${(value/1000).toFixed(0)}k`}
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Area
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke="#6366F1"
-                  strokeWidth={2}
-                  fillOpacity={1}
-                  fill="url(#revenueGradient)"
-                  name="Revenue"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </Card.Body>
-        </Card>
-      </motion.div>
+      )}
     </div>
   );
 };

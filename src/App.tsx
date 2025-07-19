@@ -24,6 +24,7 @@ import CreateOrderPage from './pages/Orders/CreateOrderPage';
 import PaymentsPage from './pages/Payments/PaymentsPage';
 import JobsPage from './pages/Jobs/JobsPage';
 import DesignPage from './pages/Design/DesignPage';
+import DesignerSectionPage from './pages/Design/DesignerSectionPage';
 import ProductsPage from './pages/Products/ProductsPage';
 import QRScannerPage from './pages/QRScanner/QRScannerPage';
 import DueDatesPage from './pages/DueDates/DueDatesPage';
@@ -102,6 +103,7 @@ const AppRoutes: React.FC = () => {
                 <Route path="/payments" element={<PaymentsPage />} />
                 <Route path="/jobs" element={<JobsPage />} />
                 <Route path="/design" element={<DesignPage />} />
+                <Route path="/designer-section" element={<DesignerSectionPage />} />
                 <Route path="/products" element={<ProductsPage />} />
                 <Route path="/scanner" element={<QRScannerPage />} />
                 <Route path="/due-dates" element={<DueDatesPage />} />

@@ -65,7 +65,7 @@ const navigationItems: NavigationItem[] = [
     name: 'Payments',
     href: '/payments',
     icon: CreditCardIcon,
-    departments: ['superadmin', 'admin'],
+    departments: ['superadmin', 'admin', 'sales_manager'],
     permission: 'view_payments',
   },
   {
@@ -79,8 +79,15 @@ const navigationItems: NavigationItem[] = [
     name: 'Design',
     href: '/design',
     icon: PaintBrushIcon,
-    departments: ['designer'],
+    departments: ['superadmin', 'admin', 'sales_manager', 'designer'],
     permission: 'edit_design_jobs',
+  },
+  {
+    name: 'Designer Section',
+    href: '/designer-section',
+    icon: PaintBrushIcon,
+    departments: ['superadmin', 'designer'],
+    permission: 'upload_designs',
   },
   {
     name: 'Products',

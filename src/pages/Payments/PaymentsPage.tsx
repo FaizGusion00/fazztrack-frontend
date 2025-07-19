@@ -9,6 +9,10 @@ import {
   CurrencyDollarIcon,
   DocumentTextIcon,
   CalendarIcon,
+  DocumentArrowDownIcon,
+  PhotoIcon,
+  DocumentIcon,
+  ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../contexts/AuthContext';
 import Card from '../../components/UI/Card';
@@ -36,6 +40,17 @@ interface PaymentRecord {
   rejectedReason?: string;
   createdAt: Date;
   updatedAt: Date;
+  // Receipt proof fields
+  receiptProof?: {
+    id: string;
+    fileName: string;
+    fileType: 'pdf' | 'image';
+    fileUrl: string;
+    fileSize: number;
+    uploadedAt: Date;
+    description?: string;
+  }[];
+  receiptNotes?: string;
 }
 
 const PaymentsPage: React.FC = () => {
@@ -71,6 +86,18 @@ const PaymentsPage: React.FC = () => {
           paymentMethod: 'Bank Transfer',
           createdAt: new Date('2024-12-15'),
           updatedAt: new Date('2024-12-15'),
+          receiptProof: [
+            {
+              id: 'REC-001',
+              fileName: 'bank_transfer_receipt.pdf',
+              fileType: 'pdf',
+              fileUrl: '/receipts/bank_transfer_receipt.pdf',
+              fileSize: 245760,
+              uploadedAt: new Date('2024-12-17T10:30:00'),
+              description: 'Bank transfer confirmation slip'
+            }
+          ],
+          receiptNotes: 'Payment transferred via online banking. Reference: ABC001'
         },
         {
           id: 'PAY-002',
@@ -85,6 +112,27 @@ const PaymentsPage: React.FC = () => {
           paymentMethod: 'Bank Transfer',
           createdAt: new Date('2024-12-15'),
           updatedAt: new Date('2024-12-15'),
+          receiptProof: [
+            {
+              id: 'REC-002',
+              fileName: 'payment_screenshot.jpg',
+              fileType: 'image',
+              fileUrl: '/receipts/payment_screenshot.jpg',
+              fileSize: 512000,
+              uploadedAt: new Date('2024-12-17T14:15:00'),
+              description: 'Mobile banking payment screenshot'
+            },
+            {
+              id: 'REC-003',
+              fileName: 'transaction_details.pdf',
+              fileType: 'pdf',
+              fileUrl: '/receipts/transaction_details.pdf',
+              fileSize: 189440,
+              uploadedAt: new Date('2024-12-17T14:20:00'),
+              description: 'Detailed transaction receipt'
+            }
+          ],
+          receiptNotes: 'Production payment completed. Transaction ID: TXN789456'
         },
         {
           id: 'PAY-003',
@@ -101,6 +149,18 @@ const PaymentsPage: React.FC = () => {
           approvedAt: new Date('2024-12-12'),
           createdAt: new Date('2024-12-10'),
           updatedAt: new Date('2024-12-12'),
+          receiptProof: [
+            {
+              id: 'REC-004',
+              fileName: 'credit_card_receipt.pdf',
+              fileType: 'pdf',
+              fileUrl: '/receipts/credit_card_receipt.pdf',
+              fileSize: 156672,
+              uploadedAt: new Date('2024-12-12T09:45:00'),
+              description: 'Credit card payment receipt'
+            }
+          ],
+          receiptNotes: 'Payment processed successfully via credit card'
         },
         {
           id: 'PAY-004',
@@ -117,6 +177,18 @@ const PaymentsPage: React.FC = () => {
           approvedAt: new Date('2024-12-12'),
           createdAt: new Date('2024-12-10'),
           updatedAt: new Date('2024-12-12'),
+          receiptProof: [
+            {
+              id: 'REC-005',
+              fileName: 'production_payment_receipt.pdf',
+              fileType: 'pdf',
+              fileUrl: '/receipts/production_payment_receipt.pdf',
+              fileSize: 198656,
+              uploadedAt: new Date('2024-12-12T11:20:00'),
+              description: 'Production payment confirmation'
+            }
+          ],
+          receiptNotes: 'Production payment approved and processed'
         },
         {
           id: 'PAY-005',
@@ -132,6 +204,18 @@ const PaymentsPage: React.FC = () => {
           rejectedReason: 'Insufficient payment proof documentation',
           createdAt: new Date('2024-12-08'),
           updatedAt: new Date('2024-12-09'),
+          receiptProof: [
+            {
+              id: 'REC-006',
+              fileName: 'cheque_image.jpg',
+              fileType: 'image',
+              fileUrl: '/receipts/cheque_image.jpg',
+              fileSize: 345600,
+              uploadedAt: new Date('2024-12-10T16:30:00'),
+              description: 'Cheque image (unclear)'
+            }
+          ],
+          receiptNotes: 'Cheque payment - image quality needs improvement'
         },
       ];
       
@@ -218,6 +302,14 @@ const PaymentsPage: React.FC = () => {
     }
   };
 
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'pending':
@@ -257,7 +349,7 @@ const PaymentsPage: React.FC = () => {
     }
   };
 
-  const canApprove = hasPermission('payments') && (user?.department === 'superadmin' || user?.department === 'admin');
+  const canApprove = hasPermission('approve_payments') && (user?.department === 'superadmin' || user?.department === 'admin' );
 
   if (loading) {
     return (
@@ -453,6 +545,20 @@ const PaymentsPage: React.FC = () => {
                       <div>
                         <span className="font-medium">Method:</span> {payment.paymentMethod}
                       </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">Receipt Proof:</span>
+                        {payment.receiptProof && payment.receiptProof.length > 0 ? (
+                          <Badge size="sm" className="bg-green-100 text-green-700 border-green-200">
+                            <DocumentTextIcon className="h-3 w-3 mr-1" />
+                            {payment.receiptProof.length} file{payment.receiptProof.length !== 1 ? 's' : ''}
+                          </Badge>
+                        ) : (
+                          <Badge size="sm" className="bg-yellow-100 text-yellow-700 border-yellow-200">
+                            <ExclamationTriangleIcon className="h-3 w-3 mr-1" />
+                            Not provided
+                          </Badge>
+                        )}
+                      </div>
                       {payment.approvedBy && (
                         <div>
                           <span className="font-medium">Approved by:</span> {payment.approvedBy}
@@ -609,6 +715,86 @@ const PaymentsPage: React.FC = () => {
                   <div className="p-4 bg-danger-50 rounded-lg">
                     <h4 className="font-medium text-danger-900 mb-2">Rejection Information</h4>
                     <p className="text-danger-700">{selectedPayment.rejectedReason}</p>
+                  </div>
+                )}
+                
+                {/* Receipt Proof Section */}
+                {selectedPayment.receiptProof && selectedPayment.receiptProof.length > 0 && (
+                  <div className="border-t pt-6">
+                    <h4 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
+                      <DocumentTextIcon className="h-5 w-5 text-blue-600" />
+                      Receipt Proof
+                    </h4>
+                    
+                    <div className="space-y-3">
+                      {selectedPayment.receiptProof.map((receipt) => (
+                        <div key={receipt.id} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              {receipt.fileType === 'pdf' ? (
+                                <DocumentIcon className="h-8 w-8 text-red-500" />
+                              ) : (
+                                <PhotoIcon className="h-8 w-8 text-blue-500" />
+                              )}
+                              <div>
+                                <h5 className="font-medium text-gray-900 text-sm">{receipt.fileName}</h5>
+                                <p className="text-xs text-gray-600">{receipt.description}</p>
+                                <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
+                                  <span>Size: {formatFileSize(receipt.fileSize)}</span>
+                                  <span>Uploaded: {receipt.uploadedAt.toLocaleDateString()}</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => window.open(receipt.fileUrl, '_blank')}
+                                className="h-8 px-3 text-xs bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
+                              >
+                                <EyeIcon className="h-3 w-3 mr-1" />
+                                View
+                              </Button>
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  const link = document.createElement('a');
+                                  link.href = receipt.fileUrl;
+                                  link.download = receipt.fileName;
+                                  link.click();
+                                }}
+                                className="h-8 px-3 text-xs bg-green-600 hover:bg-green-700 text-white border-green-600"
+                              >
+                                <DocumentArrowDownIcon className="h-3 w-3 mr-1" />
+                                Download
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {selectedPayment.receiptNotes && (
+                      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <h5 className="font-medium text-blue-900 mb-1 text-sm">Payment Notes</h5>
+                        <p className="text-sm text-blue-800">{selectedPayment.receiptNotes}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {/* No Receipt Proof Warning */}
+                {(!selectedPayment.receiptProof || selectedPayment.receiptProof.length === 0) && (
+                  <div className="border-t pt-6">
+                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <h4 className="font-medium text-yellow-900 mb-2 flex items-center gap-2">
+                        <ExclamationTriangleIcon className="h-5 w-5" />
+                        No Receipt Proof Provided
+                      </h4>
+                      <p className="text-sm text-yellow-800">
+                        This payment does not have any receipt proof uploaded. Please request the customer to provide payment confirmation before approval.
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>

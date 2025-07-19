@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 import {
   PlusIcon,
   MagnifyingGlassIcon,
@@ -57,6 +58,7 @@ interface DesignFile {
 
 const DesignPage: React.FC = () => {
   const { user, hasPermission } = useAuth();
+  const [searchParams] = useSearchParams();
   const [projects, setProjects] = useState<DesignProject[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -68,6 +70,9 @@ const DesignPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadFiles, setUploadFiles] = useState<File[]>([]);
   const [dragActive, setDragActive] = useState(false);
+
+  // Get order_id from URL params for approval flow
+  const orderIdFromUrl = searchParams.get('order_id');
 
   // Form data for editing
   const [formData, setFormData] = useState({
@@ -187,6 +192,7 @@ const DesignPage: React.FC = () => {
     fetchProjects();
   }, []);
 
+  // Filter projects based on search term and filters
   const filteredProjects = projects.filter(project => {
     const matchesSearch = 
       project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -197,7 +203,10 @@ const DesignPage: React.FC = () => {
     const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
     const matchesPriority = priorityFilter === 'all' || project.priority === priorityFilter;
     
-    return matchesSearch && matchesStatus && matchesPriority;
+    // If order_id is provided in URL, filter to show only that specific design
+    const matchesOrderId = orderIdFromUrl ? project.orderId === orderIdFromUrl : true;
+    
+    return matchesSearch && matchesStatus && matchesPriority && matchesOrderId;
   });
 
   const handleOpenModal = (mode: 'view' | 'edit' | 'upload', project?: DesignProject) => {
@@ -384,10 +393,20 @@ const DesignPage: React.FC = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  // Fix hasPermission usage to one argument
-  const canEdit = hasPermission('design') && (user?.department === 'superadmin' || user?.department === 'admin' || user?.department === 'sales_manager');
-  const canDesign = user?.department === 'designer';
-  const canApprove = user?.department === 'superadmin' || user?.department === 'admin' || user?.department === 'sales_manager';
+  // Access control - admin, sales_manager, superadmin, and designer can access this page
+  const hasDesignApprovalAccess = user?.role === 'superadmin' || user?.role === 'admin' || user?.role === 'sales_manager' || user?.role === 'designer';
+  const canApprove = user?.role === 'superadmin' || user?.role === 'admin' || user?.role === 'sales_manager';
+  const canProvideFeedback = user?.role === 'superadmin' || user?.role === 'admin' || user?.role === 'sales_manager';
+  const canDesign = user?.role === 'designer' || user?.role === 'superadmin';
+  const canEdit = user?.role === 'superadmin' || user?.role === 'admin' || user?.role === 'sales_manager';
+
+  // Redirect if user doesn't have access
+  useEffect(() => {
+    if (!hasDesignApprovalAccess) {
+      // Redirect to dashboard or show access denied
+      window.location.href = '/dashboard';
+    }
+  }, [hasDesignApprovalAccess]);
 
   if (loading) {
     return (
@@ -412,11 +431,35 @@ const DesignPage: React.FC = () => {
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between"
       >
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Design Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {orderIdFromUrl ? `Design Approval - Order ${orderIdFromUrl}` : 'Design Approval & Feedback'}
+          </h1>
           <p className="text-gray-600 mt-2">
-            Manage design projects and collaborate with the team
+            {orderIdFromUrl 
+              ? `Review and approve design for order ${orderIdFromUrl}`
+              : 'Review, provide feedback, and approve designs before production'
+            }
           </p>
+          {orderIdFromUrl && (
+            <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-800">
+                <strong>Design Approval Request:</strong> This design has been completed and is ready for your review and approval.
+              </p>
+            </div>
+          )}
         </div>
+        {orderIdFromUrl && (
+          <div className="mt-4 sm:mt-0">
+            <Button
+              variant="secondary"
+              onClick={() => window.location.href = '/designer-section'}
+              className="flex items-center gap-2"
+            >
+              <ArrowUpTrayIcon className="h-4 w-4 rotate-90" />
+              Back to Designer Section
+            </Button>
+          </div>
+        )}
       </motion.div>
 
       {/* Stats Cards */}
@@ -565,10 +608,11 @@ const DesignPage: React.FC = () => {
                     
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-2">
                       <div>
-                        <span className="font-medium">Design ID:</span> {project.id}
+                        <span className="font-medium text-primary-600">Order ID:</span> 
+                        <span className="font-bold text-primary-700">{project.orderId}</span>
                       </div>
                       <div>
-                        <span className="font-medium">Order:</span> {project.orderId}
+                        <span className="font-medium">Design ID:</span> {project.id}
                       </div>
                       <div>
                         <span className="font-medium">Client:</span> {project.clientName}

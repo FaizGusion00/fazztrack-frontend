@@ -151,6 +151,8 @@ const rolePermissions: Record<Role, string[]> = {
     'view_clients',
     'create_clients',
     'edit_clients',
+    'view_payments',
+    'edit_payments',
     'view_jobs',
     'create_jobs',
     'edit_jobs',
